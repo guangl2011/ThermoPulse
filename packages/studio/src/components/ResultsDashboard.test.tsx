@@ -120,13 +120,4 @@ describe("RunPanel", () => {
     const button = screen.getByRole("button", { name: "Run simulation" }) as HTMLButtonElement;
     expect(button.disabled).toBe(false);
   });
-
-  it("notes the missing engine when no run handler is wired", () => {
-    render(<RunPanel disabled={false} />);
-    const button = screen.getByRole("button", { name: "Run simulation" }) as HTMLButtonElement;
-    expect(button.disabled).toBe(true);
-    expect(
-      screen.getByText(/simulation runner lands in the next studio deliverable/),
-    ).toBeDefined();
-  });
 });

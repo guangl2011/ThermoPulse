@@ -9,13 +9,20 @@ import { ThermalEnvelopeChart } from "./ThermalEnvelopeChart";
 interface ResultsDashboardProps {
   /** Null until a simulation run has produced an assessment. */
   result: ResultsView | null;
+  /** Actionable message from the runner rejecting the inputs; null when none. */
+  error?: string | null;
 }
 
 /** Assessment dashboard: compliance scorecard, safety-envelope chart,
  * storage shortfalls, and the efficiency panels. */
-export function ResultsDashboard({ result }: ResultsDashboardProps): JSX.Element {
+export function ResultsDashboard({ result, error = null }: ResultsDashboardProps): JSX.Element {
   if (result === null) {
-    return (
+    return error !== null ? (
+      <EmptyState
+        title="Simulation could not run"
+        message={`${error} Fix the highlighted fields, then run again.`}
+      />
+    ) : (
       <EmptyState
         title="No assessment yet"
         message="Pick a preset load profile, adjust the plant configuration if you like, and run the simulation to produce your first assessment."

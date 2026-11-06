@@ -7,6 +7,7 @@ import { RunPanel } from "./components/RunPanel";
 import { SystemConfigForm } from "./components/SystemConfigForm";
 import { DEFAULT_PRESET_ID, getPreset, PRESETS } from "./lib/presets";
 import type { PresetId } from "./lib/presets";
+import { RunnerInputError, runSimulation } from "./lib/runner";
 import { validateLoadProfile, validateSystemConfig } from "./lib/validate";
 import type { LoadProfileInput, ResultsView, SystemConfigInput } from "./types";
 
@@ -24,9 +25,11 @@ export function App(): JSX.Element {
   const [systemConfig, setSystemConfig] = useState<SystemConfigInput>(
     getPreset(DEFAULT_PRESET_ID).systemConfig,
   );
-  // why: the setter arrives with the runner wiring in D2 part 2; the state
-  // slot exists so the shell's shape is already final.
-  const [result] = useState<ResultsView | null>(null);
+  const [result, setResult] = useState<ResultsView | null>(null);
+  // The core rejects inputs the form validation cannot see (step budget,
+  // capacity ceiling); its message is actionable, so it is rendered, never
+  // crashed over.
+  const [runError, setRunError] = useState<string | null>(null);
 
   const loadErrors = validateLoadProfile(loadProfile);
   const configErrors = validateSystemConfig(systemConfig);
@@ -37,6 +40,20 @@ export function App(): JSX.Element {
     setPresetId(id);
     setLoadProfile(preset.loadProfile);
     setSystemConfig(preset.systemConfig);
+  };
+
+  const handleRun = (): void => {
+    try {
+      setResult(runSimulation({ profile: loadProfile, config: systemConfig }));
+      setRunError(null);
+    } catch (error) {
+      if (error instanceof RunnerInputError) {
+        setRunError(error.message);
+        setResult(null);
+      } else {
+        throw error;
+      }
+    }
   };
 
   return (
@@ -70,13 +87,14 @@ export function App(): JSX.Element {
             />
           </section>
           <RunPanel
+            onRun={handleRun}
             disabled={hasErrors}
             disabledReason="Fix the highlighted fields to run the simulation."
           />
         </div>
         <section className="tp-panel" aria-label="Results">
           <h2 className="tp-panel__title">Assessment results</h2>
-          <ResultsDashboard result={result} />
+          <ResultsDashboard result={result} error={runError} />
         </section>
       </div>
     </div>
