@@ -1,5 +1,6 @@
 import type { JSX } from "react";
 import type { ResultsView } from "../types";
+import { formatNumber, formatPercent } from "../lib/format";
 import { ComplianceScorecard } from "./ComplianceScorecard";
 import { EfficiencyPanels } from "./EfficiencyPanels";
 import { EmptyState } from "./EmptyState";
@@ -9,13 +10,26 @@ import { ThermalEnvelopeChart } from "./ThermalEnvelopeChart";
 interface ResultsDashboardProps {
   /** Null until a simulation run has produced an assessment. */
   result: ResultsView | null;
+  /** Actionable message from the runner rejecting the inputs; null when none. */
+  error?: string | null;
+  /** Provided once the shell can export the system-spec Markdown artifact. */
+  onExport?: () => void;
 }
 
 /** Assessment dashboard: compliance scorecard, safety-envelope chart,
  * storage shortfalls, and the efficiency panels. */
-export function ResultsDashboard({ result }: ResultsDashboardProps): JSX.Element {
+export function ResultsDashboard({
+  result,
+  error = null,
+  onExport,
+}: ResultsDashboardProps): JSX.Element {
   if (result === null) {
-    return (
+    return error !== null ? (
+      <EmptyState
+        title="Simulation could not run"
+        message={`${error} Fix the highlighted fields, then run again.`}
+      />
+    ) : (
       <EmptyState
         title="No assessment yet"
         message="Pick a preset load profile, adjust the plant configuration if you like, and run the simulation to produce your first assessment."
@@ -37,7 +51,8 @@ export function ResultsDashboard({ result }: ResultsDashboardProps): JSX.Element
         <h3 className="tp-panel__title">SOFC safety envelope</h3>
         <ThermalEnvelopeChart samples={result.sofcTemperatureC} tempBandC={result.tempBandC} />
         <p className="tp-field__hint">
-          Minimum compressor surge margin over the horizon: {result.surgeMarginMin}
+          Minimum compressor surge margin over the horizon:{" "}
+          {formatPercent(result.surgeMarginMin * 100)} of design margin
         </p>
       </div>
       <div>
@@ -55,8 +70,8 @@ export function ResultsDashboard({ result }: ResultsDashboardProps): JSX.Element
             <tbody>
               {result.storageEvents.map((event, index) => (
                 <tr key={index}>
-                  <td>{event.deficitMW}</td>
-                  <td>{event.durationS}</td>
+                  <td>{formatNumber(event.deficitMW)}</td>
+                  <td>{formatNumber(event.durationS, 1)}</td>
                 </tr>
               ))}
             </tbody>
@@ -71,6 +86,13 @@ export function ResultsDashboard({ result }: ResultsDashboardProps): JSX.Element
           combinedPct={result.combinedEfficiencyPct}
         />
       </div>
+      {onExport !== undefined && (
+        <div>
+          <button type="button" className="tp-button" onClick={onExport}>
+            Export system spec (Markdown)
+          </button>
+        </div>
+      )}
     </div>
   );
 }

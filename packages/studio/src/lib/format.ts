@@ -8,3 +8,11 @@ export function formatPercent(value: number, decimals = 1): string {
   }
   return `${value.toFixed(decimals)}%`;
 }
+
+/** Format an engineering quantity with fixed decimals, e.g. `5.65` MW or `2.4` s. */
+export function formatNumber(value: number, decimals = 2): string {
+  if (!Number.isFinite(value)) {
+    throw new RangeError(`formatNumber: expected a finite number, got ${value}`);
+  }
+  return value.toFixed(decimals);
+}

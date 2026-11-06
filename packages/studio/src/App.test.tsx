@@ -1,7 +1,20 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { App } from "./App";
+import { RunnerInputError } from "./lib/runner";
+
+// The runner is pure and fast, so the App tests exercise it for real — the
+// module is mocked only to count calls and stub the rejection path.
+vi.mock("./lib/runner", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("./lib/runner")>();
+  return { ...actual, runSimulation: vi.fn(actual.runSimulation) };
+});
+
+async function importRunMock(): Promise<ReturnType<typeof vi.fn>> {
+  const runner = await import("./lib/runner");
+  return runner.runSimulation as unknown as ReturnType<typeof vi.fn>;
+}
 
 describe("App", () => {
   it("renders the shell with presets, both forms, and the empty results state", () => {
@@ -29,16 +42,62 @@ describe("App", () => {
     expect(screen.getByText("Fix the highlighted fields to run the simulation.")).toBeDefined();
   });
 
-  it("clears the error state when a valid value is restored", () => {
+  it("clears the error state and re-enables the run when a valid value is restored", () => {
     render(<App />);
     const nominal = screen.getByLabelText(/Nominal campus load/);
     fireEvent.change(nominal, { target: { value: "-5" } });
     fireEvent.change(nominal, { target: { value: "72" } });
     expect(screen.queryByRole("alert")).toBeNull();
     const run = screen.getByRole("button", { name: "Run simulation" }) as HTMLButtonElement;
-    // The engine is wired in D2 part 2, so the run stays disabled — but for
-    // the validated-input reason, not the invalid-input reason.
-    expect(run.disabled).toBe(true);
-    expect(screen.queryByText("Fix the highlighted fields to run the simulation.")).toBeNull();
+    expect(run.disabled).toBe(false);
+  });
+
+  it("runs the preset simulation and renders the assessment dashboard", async () => {
+    // Preset-to-first-result contract: the preset is preselected, so one
+    // click on Run produces the full assessment.
+    const runMock = await importRunMock();
+    render(<App />);
+    await userEvent.click(screen.getByRole("button", { name: "Run simulation" }));
+    expect(screen.getByTestId("results-body")).toBeDefined();
+    expect(screen.getByText("Compliance scorecard")).toBeDefined();
+    expect(screen.getByText("SOFC safety envelope")).toBeDefined();
+    expect(screen.getByText("Storage shortfalls")).toBeDefined();
+    expect(screen.getByText("Efficiency")).toBeDefined();
+    expect(runMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("renders the runner's actionable rejection instead of crashing", async () => {
+    const runMock = await importRunMock();
+    runMock.mockImplementationOnce(() => {
+      throw new RunnerInputError(
+        "nominalMW must be in (0, 10000] MW. Set nominalMW to the sustained campus load in MW.",
+      );
+    });
+    render(<App />);
+    await userEvent.click(screen.getByRole("button", { name: "Run simulation" }));
+    expect(screen.getByText("Simulation could not run")).toBeDefined();
+    expect(screen.getByText(/nominalMW must be in/)).toBeDefined();
+    expect(screen.queryByTestId("results-body")).toBeNull();
+  });
+
+  it("exports the system-spec markdown containing the compliance scorecard", async () => {
+    render(<App />);
+    await userEvent.click(screen.getByRole("button", { name: "Run simulation" }));
+    const created: Blob[] = [];
+    const originalCreate = URL.createObjectURL;
+    const originalRevoke = URL.revokeObjectURL;
+    URL.createObjectURL = (blob: Blob) => {
+      created.push(blob);
+      return "blob:mock";
+    };
+    URL.revokeObjectURL = () => {};
+    try {
+      await userEvent.click(screen.getByRole("button", { name: "Export system spec (Markdown)" }));
+    } finally {
+      URL.createObjectURL = originalCreate;
+      URL.revokeObjectURL = originalRevoke;
+    }
+    expect(created).toHaveLength(1);
+    expect(await created[0]!.text()).toContain("## Compliance scorecard");
   });
 });
