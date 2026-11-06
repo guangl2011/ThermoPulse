@@ -5,9 +5,6 @@ import {
   DEFAULT_SURGE_FAIL_FRACTION,
   DEFAULT_SURGE_MARGINAL_FRACTION,
   DEFAULT_THERMAL_MARGINAL_DEVIATION_C,
-  dispatchStorage,
-  runSofcThermal,
-  runTurbine,
   scoreCompliance,
   synthesizeLoad,
   worstVerdict,
@@ -15,41 +12,23 @@ import {
 import type {
   ComplianceScore,
   LoadProfile,
-  PulseSeries,
   SofcThermalResult,
-  StorageDispatchResult,
   SystemConfig,
   TurbineResult,
+  StorageDispatchResult,
   Verdict,
 } from "./types.js";
+import {
+  compose,
+  healthyStorage,
+  healthyTurbine,
+  referenceSystem,
+  thermalResult,
+} from "./testing.js";
 
 const SEVERITY: Record<Verdict, number> = { PASS: 0, MARGINAL: 1, FAIL: 2 };
 
-const system: SystemConfig = {
-  sofc: {
-    mw: 60,
-    minLoadFraction: 0.3,
-    thermalTimeConstantS: 900,
-    maxRampMWPerS: 1,
-    tempBandC: [550, 750],
-  },
-  turbine: { mw: 60, responseS: 8, surgeMarginFraction: 0.2 },
-  storage: { powerMW: 70, energyKWh: 2000, technology: "ultracap" },
-  sst: { topology: "dc-coupled-800v", efficiencyPct: 97 },
-  heatRecovery: { absorptionChillerCOP: 0.7, returnWaterC: 55 },
-};
-
-/** Composed pipeline: dispatch, then the thermal models on the effective commands. */
-function compose(
-  cfg: SystemConfig,
-  load: PulseSeries,
-  options: { initialSoCFraction?: number } = {},
-) {
-  const storage = dispatchStorage(load, cfg, options);
-  const thermal = runSofcThermal(cfg.sofc, storage.sofcCommandMW, load.timestepS);
-  const turbine = runTurbine(cfg.turbine, storage.turbineCommandMW, load.timestepS);
-  return { storage, thermal, turbine };
-}
+const system = referenceSystem();
 
 describe("worstVerdict", () => {
   it("ranks FAIL above MARGINAL above PASS", () => {
@@ -92,62 +71,6 @@ describe("scoreThermalStress", () => {
     ).toBe("FAIL");
   });
 });
-
-// -- helpers for scorer-only tests -------------------------------------------
-
-function healthyTurbine() {
-  return {
-    horizonS: 600,
-    timestepS: 1,
-    deliveredMW: new Array<number>(600).fill(30),
-    surgeMargin: new Array<number>(600).fill(system.turbine.surgeMarginFraction),
-    surgeMarginMin: system.turbine.surgeMarginFraction,
-  };
-}
-
-function healthyStorage() {
-  return {
-    timestepS: 1,
-    horizonS: 600,
-    storagePowerMW: new Array<number>(600).fill(0),
-    energyKWh: {
-      timesS: new Array<number>(600).fill(0),
-      values: new Array<number>(600).fill(system.storage.energyKWh),
-    },
-    sofcCommandMW: new Array<number>(600).fill(60),
-    turbineCommandMW: new Array<number>(600).fill(30),
-    unmetMW: new Array<number>(600).fill(0),
-    unmetEnergyMWh: 0,
-    storageEvents: [],
-    oversubscribed: false,
-    dischargedEnergyMWh: 0,
-    chargedEnergyMWh: 0,
-    spilledEnergyMWh: 0,
-  };
-}
-
-/** A complete, physically-quiet SofcThermalResult; overrides replace fields wholesale. */
-function thermalResult(overrides: Partial<SofcThermalResult> = {}): SofcThermalResult {
-  return {
-    horizonS: 600,
-    timestepS: 1,
-    deliveredMW: new Array<number>(600).fill(60),
-    stressDeviationC: new Array<number>(600).fill(0),
-    temperatureC: {
-      timesS: new Array<number>(600).fill(0),
-      values: new Array<number>(600).fill(650),
-    },
-    excursions: [],
-    minTemperatureC: 650,
-    maxTemperatureC: 650,
-    fuelEnergyMWh: 0,
-    electricalEnergyMWh: 0,
-    rejectedHeatMWh: 0,
-    storedHeatDeltaMWh: 0,
-    energyClosureErrorPct: 0,
-    ...overrides,
-  };
-}
 
 describe("scoreSurge", () => {
   const turbineWithMin = (marginMin: number) => ({

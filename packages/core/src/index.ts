@@ -23,6 +23,8 @@ export {
 export { synthesizeLoad } from "./pulse.js";
 export { allocateDemand, runSofcThermal, runTurbine, simulateThermal } from "./thermal.js";
 export { DEFICIT_EPSILON_MW, dispatchStorage } from "./buffer.js";
+export { EXHAUST_REFERENCE_C, accountEfficiency, integratePowerMWh } from "./efficiency.js";
+export type { EfficiencyBreakdown } from "./efficiency.js";
 export {
   DEFAULT_STORAGE_MARGINAL_SOC_FRACTION,
   DEFAULT_SURGE_FAIL_FRACTION,
