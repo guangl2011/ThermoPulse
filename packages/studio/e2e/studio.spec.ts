@@ -92,7 +92,9 @@ test("export completes on a FAIL run", async ({ page }) => {
 
   const results = page.getByTestId("results-body");
   await expect(results).toBeVisible();
-  await expect(results.locator(".tp-scorecard, [data-testid=results-body]").getByText("FAIL").first()).toBeVisible();
+  await expect(
+    results.locator(".tp-scorecard, [data-testid=results-body]").getByText("FAIL").first(),
+  ).toBeVisible();
 
   const [download] = await Promise.all([
     page.waitForEvent("download"),
