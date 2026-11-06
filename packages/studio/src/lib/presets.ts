@@ -143,3 +143,13 @@ export const PRESETS: readonly StudioPreset[] = PRESET_SHAPES.map((shape) => ({
   loadProfile: toLoadProfile(shape.load, shape.label),
   systemConfig: toSystemConfig(shape.system),
 }));
+
+export const DEFAULT_PRESET_ID: PresetId = "training-heavy";
+
+export function getPreset(id: PresetId): StudioPreset {
+  const preset = PRESETS.find((candidate) => candidate.id === id);
+  if (preset === undefined) {
+    throw new Error(`Unknown preset id: ${id}`);
+  }
+  return preset;
+}
