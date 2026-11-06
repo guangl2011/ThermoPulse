@@ -8,6 +8,8 @@ on:
     # Skip runs for commits that touch no code (e.g. repository housekeeping).
     paths:
       - "packages/**"
+      - "docs/**"
+      - "scripts/**"
       - "pnpm-lock.yaml"
       - ".github/workflows/**"
 
@@ -30,6 +32,9 @@ jobs:
 
       - name: Lint
         run: pnpm lint
+
+      - name: Pitch word-count gate
+        run: node scripts/pitch-wordcount.mjs docs/doe/pitch.md
 
       - name: Format check
         run: pnpm format:check

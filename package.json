@@ -11,6 +11,7 @@
     "build": "pnpm -r build",
     "test": "pnpm -r test",
     "lint": "eslint .",
+    "pitch:wordcount": "node scripts/pitch-wordcount.mjs docs/doe/pitch.md",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "typecheck": "pnpm -r typecheck"
