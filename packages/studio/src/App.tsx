@@ -8,6 +8,8 @@ import { SystemConfigForm } from "./components/SystemConfigForm";
 import { DEFAULT_PRESET_ID, getPreset, PRESETS } from "./lib/presets";
 import type { PresetId } from "./lib/presets";
 import { RunnerInputError, runSimulation } from "./lib/runner";
+import { downloadTextFile } from "./lib/download";
+import { buildSystemSpecMarkdown, specFileName } from "./lib/specExport";
 import { validateLoadProfile, validateSystemConfig } from "./lib/validate";
 import type { LoadProfileInput, ResultsView, SystemConfigInput } from "./types";
 
@@ -56,6 +58,18 @@ export function App(): JSX.Element {
     }
   };
 
+  // Export is only reachable with a result on screen (the dashboard renders
+  // the action with the assessment), so the non-null assertion holds.
+  const handleExport = (): void => {
+    if (result === null) {
+      return;
+    }
+    downloadTextFile(
+      specFileName(loadProfile.name),
+      buildSystemSpecMarkdown(loadProfile, systemConfig, result, new Date().toISOString()),
+    );
+  };
+
   return (
     <div className="tp-shell">
       <header className="tp-shell__header">
@@ -94,7 +108,7 @@ export function App(): JSX.Element {
         </div>
         <section className="tp-panel" aria-label="Results">
           <h2 className="tp-panel__title">Assessment results</h2>
-          <ResultsDashboard result={result} error={runError} />
+          <ResultsDashboard result={result} error={runError} onExport={handleExport} />
         </section>
       </div>
     </div>

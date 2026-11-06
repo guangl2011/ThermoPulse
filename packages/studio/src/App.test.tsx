@@ -79,4 +79,25 @@ describe("App", () => {
     expect(screen.getByText(/nominalMW must be in/)).toBeDefined();
     expect(screen.queryByTestId("results-body")).toBeNull();
   });
+
+  it("exports the system-spec markdown containing the compliance scorecard", async () => {
+    render(<App />);
+    await userEvent.click(screen.getByRole("button", { name: "Run simulation" }));
+    const created: Blob[] = [];
+    const originalCreate = URL.createObjectURL;
+    const originalRevoke = URL.revokeObjectURL;
+    URL.createObjectURL = (blob: Blob) => {
+      created.push(blob);
+      return "blob:mock";
+    };
+    URL.revokeObjectURL = () => {};
+    try {
+      await userEvent.click(screen.getByRole("button", { name: "Export system spec (Markdown)" }));
+    } finally {
+      URL.createObjectURL = originalCreate;
+      URL.revokeObjectURL = originalRevoke;
+    }
+    expect(created).toHaveLength(1);
+    expect(await created[0]!.text()).toContain("## Compliance scorecard");
+  });
 });

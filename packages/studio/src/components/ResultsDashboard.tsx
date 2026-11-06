@@ -12,11 +12,17 @@ interface ResultsDashboardProps {
   result: ResultsView | null;
   /** Actionable message from the runner rejecting the inputs; null when none. */
   error?: string | null;
+  /** Provided once the shell can export the system-spec Markdown artifact. */
+  onExport?: () => void;
 }
 
 /** Assessment dashboard: compliance scorecard, safety-envelope chart,
  * storage shortfalls, and the efficiency panels. */
-export function ResultsDashboard({ result, error = null }: ResultsDashboardProps): JSX.Element {
+export function ResultsDashboard({
+  result,
+  error = null,
+  onExport,
+}: ResultsDashboardProps): JSX.Element {
   if (result === null) {
     return error !== null ? (
       <EmptyState
@@ -80,6 +86,13 @@ export function ResultsDashboard({ result, error = null }: ResultsDashboardProps
           combinedPct={result.combinedEfficiencyPct}
         />
       </div>
+      {onExport !== undefined && (
+        <div>
+          <button type="button" className="tp-button" onClick={onExport}>
+            Export system spec (Markdown)
+          </button>
+        </div>
+      )}
     </div>
   );
 }

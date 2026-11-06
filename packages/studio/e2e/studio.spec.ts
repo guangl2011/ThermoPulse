@@ -25,3 +25,25 @@ test("preset selection through dashboard render", async ({ page }) => {
   await expect(results.locator("svg.tp-chart")).toBeVisible();
   await expect(results.getByText(/Minimum compressor surge margin/)).toBeVisible();
 });
+
+// The export is the AIDC onboarding artifact: a complete Markdown system spec
+// whose compliance scorecard is present on every run, whatever the verdict.
+test("system-spec export contains the compliance scorecard", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Run simulation" }).click();
+  const results = page.getByTestId("results-body");
+  await expect(results).toBeVisible();
+
+  const [download] = await Promise.all([
+    page.waitForEvent("download"),
+    page.getByRole("button", { name: "Export system spec (Markdown)" }).click(),
+  ]);
+  expect(download.suggestedFilename()).toMatch(/^thermopulse-system-spec-.*\.md$/);
+
+  const fs = await import("node:fs");
+  const content = fs.readFileSync(await download.path(), "utf8");
+  expect(content).toContain("## Compliance scorecard");
+  expect(content).toMatch(/\| \*\*Overall\*\* \| \*\*(PASS|MARGINAL|FAIL)\*\* \|/);
+  expect(content).toContain("## Plant configuration");
+  expect(content).toContain("Combined efficiency");
+});
