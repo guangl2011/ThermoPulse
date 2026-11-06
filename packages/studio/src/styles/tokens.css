@@ -1,0 +1,45 @@
+/*
+ * ThermoPulse-AI design tokens.
+ * Single source of truth for color, spacing, type, and status styling.
+ */
+:root {
+  /* Color — surface and text */
+  --tp-color-bg: #f4f6f8;
+  --tp-color-surface: #ffffff;
+  --tp-color-surface-raised: #ffffff;
+  --tp-color-border: #d7dee5;
+  --tp-color-text: #1c2b36;
+  --tp-color-text-muted: #5c6f7d;
+
+  /* Color — brand (thermal: heat + grid) */
+  --tp-color-brand: #0f5e8c;
+  --tp-color-brand-strong: #0a4364;
+  --tp-color-accent: #e2711d;
+
+  /* Color — compliance statuses */
+  --tp-color-pass: #1a7f37;
+  --tp-color-pass-bg: #e6f4ea;
+  --tp-color-marginal: #9a6700;
+  --tp-color-marginal-bg: #fff3d6;
+  --tp-color-fail: #c0341d;
+  --tp-color-fail-bg: #fdebe8;
+
+  /* Color — chart */
+  --tp-color-chart-band: #dcefe3;
+  --tp-color-chart-line: var(--tp-color-brand);
+  --tp-color-chart-band-edge: #9fc7ae;
+
+  /* Spacing */
+  --tp-space-1: 0.25rem;
+  --tp-space-2: 0.5rem;
+  --tp-space-3: 0.75rem;
+  --tp-space-4: 1rem;
+  --tp-space-6: 1.5rem;
+
+  /* Radius and type */
+  --tp-radius: 6px;
+  --tp-font-size-sm: 0.8125rem;
+  --tp-font-size-base: 0.9375rem;
+  --tp-font-size-lg: 1.125rem;
+  --tp-font-size-xl: 1.375rem;
+}
