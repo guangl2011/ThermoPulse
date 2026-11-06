@@ -1,16 +1,45 @@
 /**
- * Pure, dependency-free numerical helpers shared by the simulation engine.
- * The full SOFC-GT physics engine lands in its own deliverable; these are the
- * primitives it will be built on.
+ * @thermopulse/core — pure physics engine for ThermoPulse-AI.
+ * No I/O and no UI dependencies: every export is a pure function or a type.
  */
 
-/** Constrain `value` to the closed interval [`min`, `max`]. */
-export function clamp(value: number, min: number, max: number): number {
-  if (Number.isNaN(value)) {
-    throw new TypeError("clamp: value must be a finite number, got NaN");
-  }
-  if (min > max) {
-    throw new RangeError(`clamp: min (${min}) must not exceed max (${max})`);
-  }
-  return Math.min(max, Math.max(min, value));
-}
+export { clamp, at } from "./math.js";
+export { InputValidationError } from "./errors.js";
+export {
+  assertValidCommandSeries,
+  assertValidLoadProfile,
+  assertValidSofcOptions,
+  assertValidSofcParams,
+  assertValidSystemConfig,
+  assertValidTurbineOptions,
+  assertValidTurbineParams,
+  stepCount,
+  MAX_HORIZON_S,
+  MAX_PLANT_MW,
+  MAX_STEPS,
+  MAX_TIMESTEP_S,
+  MIN_TIMESTEP_S,
+} from "./validate.js";
+export { synthesizeLoad } from "./pulse.js";
+export { allocateDemand, runSofcThermal, runTurbine, simulateThermal } from "./thermal.js";
+export type {
+  ComplianceScore,
+  DemandAllocation,
+  GpuPulse,
+  LoadProfile,
+  PulseSeries,
+  SimulationResult,
+  SofcModelOptions,
+  SofcThermalResult,
+  SstTopology,
+  StorageEvent,
+  StorageTechnology,
+  SystemConfig,
+  ThermalExcursion,
+  ThermalModelOptions,
+  ThermalRunResult,
+  TimeSeries,
+  TurbineModelOptions,
+  TurbineResult,
+  Verdict,
+} from "./types.js";
