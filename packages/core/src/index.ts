@@ -22,6 +22,7 @@ export {
 } from "./validate.js";
 export { synthesizeLoad } from "./pulse.js";
 export { allocateDemand, runSofcThermal, runTurbine, simulateThermal } from "./thermal.js";
+export { DEFICIT_EPSILON_MW, dispatchStorage } from "./buffer.js";
 export type {
   ComplianceScore,
   DemandAllocation,
@@ -32,6 +33,8 @@ export type {
   SofcModelOptions,
   SofcThermalResult,
   SstTopology,
+  StorageDispatchOptions,
+  StorageDispatchResult,
   StorageEvent,
   StorageTechnology,
   SystemConfig,

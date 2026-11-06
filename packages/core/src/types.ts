@@ -200,3 +200,52 @@ export interface ThermalRunResult {
   sofc: SofcThermalResult;
   turbine: TurbineResult;
 }
+
+// ---------------------------------------------------------------------------
+// Part-2 physics results (storage buffering dispatch)
+// ---------------------------------------------------------------------------
+
+export interface StorageDispatchOptions {
+  /**
+   * Device-side state of charge at horizon start as a fraction of
+   * `storage.energyKWh`, in (0, 1]. Defaults to 1 (fully charged buffer).
+   */
+  initialSoCFraction?: number;
+}
+
+export interface StorageDispatchResult {
+  timestepS: number;
+  horizonS: number;
+  /**
+   * Bus-side buffer power at each step: positive is discharge (the buffer
+   * serves the bus), negative is charge (surplus generation banks in the
+   * buffer). Bounded by `storage.powerMW` in both directions.
+   */
+  storagePowerMW: number[];
+  /** Device-side energy state at step ends (kWh), inside [0, energyKWh]. */
+  energyKWh: TimeSeries;
+  /**
+   * Effective per-resource command series the thermal models run against.
+   * With a healthy buffer these follow the plant's capability envelope (the
+   * SOFC-GT never sees the pulse); uncovered deficits propagate on top.
+   */
+  sofcCommandMW: number[];
+  turbineCommandMW: number[];
+  /**
+   * Bus deficit left after generation and storage assist (MW, >= 0). Nonzero
+   * only when the buffer itself is power- or energy-limited: shortfalls are
+   * recorded, never silently clamped away.
+   */
+  unmetMW: number[];
+  unmetEnergyMWh: number;
+  /** Contiguous deficit episodes over the horizon. */
+  storageEvents: StorageEvent[];
+  /** True when sofc.mw + turbine.mw < nominalMW: the plant cannot serve sustained load. */
+  oversubscribed: boolean;
+  /** Bus-side energy the buffer delivered to the bus over the horizon (MWh). */
+  dischargedEnergyMWh: number;
+  /** Bus-side surplus energy banked into the buffer over the horizon (MWh). */
+  chargedEnergyMWh: number;
+  /** Surplus generation neither the bus nor the buffer could absorb (MWh). */
+  spilledEnergyMWh: number;
+}
