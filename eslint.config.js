@@ -9,6 +9,11 @@ export default tseslint.config(
   ...tseslint.configs.recommended,
   prettier,
   {
+    // Standalone Node scripts run outside the TS package graph.
+    files: ["scripts/**/*.mjs"],
+    languageOptions: { globals: { console: "readonly", process: "readonly" } },
+  },
+  {
     files: ["packages/studio/src/**/*.{ts,tsx}"],
     plugins: { "react-hooks": reactHooks },
     rules: reactHooks.configs.recommended.rules,
