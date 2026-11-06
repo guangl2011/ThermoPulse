@@ -84,7 +84,7 @@ describe("ResultsDashboard", () => {
     render(<ResultsDashboard result={PASSING_RESULT} />);
     expect(screen.getAllByText("PASS").length).toBeGreaterThan(0);
     expect(
-      screen.getByText(/Minimum compressor surge margin over the horizon: 0.12/),
+      screen.getByText(/Minimum compressor surge margin over the horizon: 12.0% of design margin/),
     ).toBeDefined();
     expect(screen.getByText("76.4%")).toBeDefined();
     expect(screen.getByText(/No buffering shortfalls/)).toBeDefined();
@@ -96,8 +96,15 @@ describe("ResultsDashboard", () => {
       storageEvents: [{ deficitMW: 18.5, durationS: 2.4 }],
     };
     render(<ResultsDashboard result={withEvents} />);
-    expect(screen.getByText("18.5")).toBeDefined();
+    expect(screen.getByText("18.50")).toBeDefined();
     expect(screen.getByText("2.4")).toBeDefined();
+  });
+
+  it("renders the runner's actionable rejection instead of crashing", () => {
+    render(<ResultsDashboard result={null} error="nominalMW must be in (0, 10000] MW." />);
+    expect(screen.getByText("Simulation could not run")).toBeDefined();
+    expect(screen.getByText(/nominalMW must be in/)).toBeDefined();
+    expect(screen.getByText(/Fix the highlighted fields, then run again/)).toBeDefined();
   });
 });
 

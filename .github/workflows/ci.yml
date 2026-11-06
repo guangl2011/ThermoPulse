@@ -45,5 +45,11 @@ jobs:
       - name: Test
         run: pnpm test
 
+      - name: Install Playwright chromium
+        run: pnpm --filter @thermopulse/studio exec playwright install --with-deps chromium
+
+      - name: E2E smoke
+        run: pnpm --filter @thermopulse/studio test:e2e
+
       - name: Build
         run: pnpm build

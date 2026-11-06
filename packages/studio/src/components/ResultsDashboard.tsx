@@ -1,5 +1,6 @@
 import type { JSX } from "react";
 import type { ResultsView } from "../types";
+import { formatNumber, formatPercent } from "../lib/format";
 import { ComplianceScorecard } from "./ComplianceScorecard";
 import { EfficiencyPanels } from "./EfficiencyPanels";
 import { EmptyState } from "./EmptyState";
@@ -44,7 +45,8 @@ export function ResultsDashboard({ result, error = null }: ResultsDashboardProps
         <h3 className="tp-panel__title">SOFC safety envelope</h3>
         <ThermalEnvelopeChart samples={result.sofcTemperatureC} tempBandC={result.tempBandC} />
         <p className="tp-field__hint">
-          Minimum compressor surge margin over the horizon: {result.surgeMarginMin}
+          Minimum compressor surge margin over the horizon:{" "}
+          {formatPercent(result.surgeMarginMin * 100)} of design margin
         </p>
       </div>
       <div>
@@ -62,8 +64,8 @@ export function ResultsDashboard({ result, error = null }: ResultsDashboardProps
             <tbody>
               {result.storageEvents.map((event, index) => (
                 <tr key={index}>
-                  <td>{event.deficitMW}</td>
-                  <td>{event.durationS}</td>
+                  <td>{formatNumber(event.deficitMW)}</td>
+                  <td>{formatNumber(event.durationS, 1)}</td>
                 </tr>
               ))}
             </tbody>
