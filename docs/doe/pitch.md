@@ -4,7 +4,7 @@
 
 **Project:** ThermoPulse-AI: Physics-Constrained Thermal-Electrical Dynamic Control for SOFC-GT Hybrid Microgrids in AI Data Centers
 
-*Non-proprietary. Word counts below are conservative: they include inline bracketed source notes and placeholder flags, so the pitch stays under cap however a reviewer counts.*
+_Non-proprietary. Word counts below are conservative: they include inline bracketed source notes and placeholder flags, so the pitch stays under cap however a reviewer counts._
 
 ---
 
@@ -53,11 +53,11 @@ Enerfy leads the project as the SBIR prime. Dr. Fang, Principal Investigator, an
 
 ## Verified Word Counts (pitch body, script-checked)
 
-| Section | Cap | Count | Status |
-|---|---|---|---|
-| Summary | 100 | 86 | PASS |
-| Technical Promise | 200 | 199 | PASS |
-| Commercialization | 200 | 188 | PASS |
-| Team | 200 | 98 | PASS |
+| Section           | Cap | Count | Status |
+| ----------------- | --- | ----- | ------ |
+| Summary           | 100 | 86    | PASS   |
+| Technical Promise | 200 | 199   | PASS   |
+| Commercialization | 200 | 188   | PASS   |
+| Team              | 200 | 98    | PASS   |
 
-*(Counts include inline bracketed notes, checked 2026-11-07; re-run the count after any edit.)*
+_(Counts include inline bracketed notes, checked 2026-11-07; re-run the count after any edit.)_
