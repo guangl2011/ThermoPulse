@@ -28,13 +28,7 @@ Our onboarding product is the ThermoPulse-AI Sizing & Simulation Studio: an oper
 
 ## 4. Team Qualifications (≤200 words)
 
-[Prime Applicant Entity] leads the program as prime awardee, contributing the physics-constrained control architecture, power-electronics integration, and simulation software engineering. The team is led by founder Richard Lu. [Placeholder — confirm the registered entity holding SAM and SBA registrations before submission.]
-
-Rutgers University, Department of Industrial and Systems Engineering, is the STTR research partner performing at least 30% of the effort: multi-physics thermal-mechanical-electrical co-simulation, multi-objective optimization under thermal-stress constraints, and system reliability and degradation modeling. Rutgers ISE sustains research programs in energy-systems optimization, reliability engineering, and digital twins.
-
-Smartburn.com serves as industrial consultant, supplying combustion and gas-turbine heat-exchanger engineering priors, validating control strategies against real high-temperature equipment constraints, and supporting commercialization. Its letter of commitment defines scope, hourly rates, and conflict-of-interest safeguards.
-
-Together the team covers the topic's full span — combustion and thermal engineering, turbomachinery dynamics, power electronics, and AI-driven control — with simulation evidence, not slideware, at the center of the Phase I work plan.
+Enerfy leads the project as the SBIR prime. Dr. Fang, Principal Investigator, and Dr. Yang, Co-Principal Investigator, direct the physics-core and control work: pulse synthesis, SOFC-GT thermal/surge modeling, storage dispatch, and the sizing-and-simulation studio. Rutgers ISE is a subawardee at 23% of effort, performing multi-physics digital-twin cross-validation of the studio's surrogate models and co-authoring Phase I verification reports. Dr. Guo of Smartburn.com serves as industrial consultant at 10% of effort, supplying combustion and gas-turbine heat-exchanger engineering priors and validating control strategies against real high-temperature equipment constraints. His letter of commitment defines scope, hourly rate, and conflict-of-interest safeguards.
 
 ---
 
@@ -48,12 +42,12 @@ Together the team covers the topic's full span — combustion and thermal engine
 
 ## Submission Checklist (internal — not part of the pitch PDF)
 
-- [ ] **BLOCKER — Prime applicant entity:** `[Prime Applicant Entity]` is a placeholder. Confirm the registered entity (must hold SAM + SBA registrations) and replace everywhere before submission. Open question from spec art_B7GK27w7.
+- [x] **RESOLVED — Prime applicant entity:** Enerfy confirmed as SBIR prime with Dr. Fang as PI and Dr. Yang as co-PI (2026-11-06). Registrations must remain current through submission.
 - [ ] Registrations current: SAM, SBA Company Registry, ConnectWerx network, AMP.
 - [ ] Word counts verified by script (see counts below); re-verify after any edit.
 - [ ] PDF ≤ 5 MB, uploaded to AMP by **December 16, 2026, 2:00 p.m. ET**.
 - [ ] Confirm no proprietary info anywhere in the pitch (this draft is non-proprietary).
-- [ ] **Verify budget-split rules** (SBIR ≥67% prime / ≤33% external; STTR 40/30/30) against the official ConnectWerx Pitch Development Guide before finalizing D5 — figures came from the internal memo, not the official guide.
+- [ ] **Verify budget-split rules** (SBIR ≥67% prime / ≤33% external) and the solicitation's measurement basis for "effort" (dollars vs labor hours) against the official ConnectWerx Pitch Development Guide before finalizing D5 — external work sits exactly at the 33% Phase I cap.
 - [ ] Max 3 pitches per company — confirm this pitch is within the company's quota.
 - [ ] Optionally attend DOE/ConnectWerx office hours (Nov 19 and Dec 1, 2026, 3:00 p.m. ET).
 
@@ -64,6 +58,6 @@ Together the team covers the topic's full span — combustion and thermal engine
 | Summary           | 100 | 86    | PASS   |
 | Technical Promise | 200 | 199   | PASS   |
 | Commercialization | 200 | 188   | PASS   |
-| Team              | 200 | 158   | PASS   |
+| Team              | 200 | 98    | PASS   |
 
-_(Counts include inline bracketed notes, checked 2026-11-06; re-run the count after any edit.)_
+_(Counts include inline bracketed notes, checked 2026-11-07; re-run the count after any edit.)_
